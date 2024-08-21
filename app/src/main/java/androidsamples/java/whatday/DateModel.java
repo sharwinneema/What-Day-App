@@ -1,11 +1,26 @@
 package androidsamples.java.whatday;
 
+import java.util.Calendar;
+import java.text.DateFormatSymbols;
+import java.util.Locale;
+
 import androidx.annotation.NonNull;
 
-/**
- * Represents the date to be set, whether it is a valid date, and the message with error status or the day of the week.
- */
 public class DateModel {
+  private static String message;
+
+  private static boolean isLeapYear(int year) {
+    if (year % 4 == 0) {
+      if (year % 100 == 0) {
+        if (year % 400 == 0) {
+          return true;
+        }
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
 
   /**
    * Initializes the {@link DateModel} with the given year, month, and date.
@@ -17,7 +32,50 @@ public class DateModel {
    * @param dateStr  a {@code String} representing the date, e.g., "15"
    */
   public static void initialize(String yearStr, String monthStr, String dateStr) {
-    // TODO implement the method to match the description
+    try {
+      // Validate year
+      int year = Integer.parseInt(yearStr);
+      if (year < 1 || year > 9999) {
+        message = "Invalid year";
+        return;
+      }
+
+      // Validate month
+      int month = Integer.parseInt(monthStr);
+      if (month < 1 || month > 12) {
+        message = "Invalid month";
+        return;
+      }
+
+      // Validate date
+      int date = Integer.parseInt(dateStr);
+      Calendar calendar = Calendar.getInstance();
+      calendar.set(year, month - 1, 1); // Set to the first day of the given month
+      int maxDate = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+      if (date < 1 || date > maxDate) {
+        // Check specific error messages
+        if (month == 2 && date == 29) {
+          if (!isLeapYear(year)) {
+            message = "February of " + year + " does not have 29 days";
+            return;
+          }
+        }
+        message = "This month does not have " + date + " days";
+        return;
+      }
+
+      // If valid, get the day of the week
+      calendar.set(year, month - 1, date);
+      int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
+      // Convert the day of the week to a string
+      String dayOfWeekStr = new DateFormatSymbols(Locale.getDefault()).getWeekdays()[dayOfWeek];
+      message = dayOfWeekStr;
+
+    } catch (NumberFormatException e) {
+      message = "Enter values in a proper numeric format";
+    }
   }
 
   /**
@@ -29,7 +87,6 @@ public class DateModel {
    */
   @NonNull
   public static String getMessage() {
-    // TODO implement the method to match the description
-    return "Placeholder";
+    return message != null ? message : "No date set.";
   }
 }
