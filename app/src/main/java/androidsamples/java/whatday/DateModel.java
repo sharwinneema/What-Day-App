@@ -61,7 +61,7 @@ public class DateModel {
             return;
           }
         }
-        else if(date>=31)message="Invalid date";
+        else if(date>31)message="Invalid date";
         else message = "This month does not have " + date + " days";
         return;
       }
