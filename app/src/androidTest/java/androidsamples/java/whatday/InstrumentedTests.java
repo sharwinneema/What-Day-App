@@ -44,4 +44,24 @@ public class InstrumentedTests {
 
     onView(withId(R.id.txt_display)).check(matches(withText("Invalid date")));
   }
+  @Test
+  public void test2100noleapyear() {
+    onView(withId(R.id.editDate)).perform(clearText(), typeText("29"));
+    onView(withId(R.id.editMonth)).perform(clearText(), typeText("2"));
+    onView(withId(R.id.editYear)).perform(clearText(), typeText("2100"));
+
+    onView(withId(R.id.btn_check)).perform(click());
+
+    onView(withId(R.id.txt_display)).check(matches(withText("February of 2100 does not have 29 days")));
+  }
+  @Test
+  public void testfloatingdates() {
+    onView(withId(R.id.editDate)).perform(clearText(), typeText("1.2"));
+    onView(withId(R.id.editMonth)).perform(clearText(), typeText("2"));
+    onView(withId(R.id.editYear)).perform(clearText(), typeText("2100"));
+
+    onView(withId(R.id.btn_check)).perform(click());
+
+    onView(withId(R.id.txt_display)).check(matches(withText("Enter values in a proper numeric format")));
+  }
 }
